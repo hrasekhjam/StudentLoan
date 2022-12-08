@@ -12,7 +12,7 @@ public class StudentService {
     public void register(Students students){
         studentRepository.create(students);
     }
-    public void loginUser(String username, String password) throws UserNotFoundException, InvalidUsernamePasswordException {
+    public Students loginUser(String username, String password) throws UserNotFoundException, InvalidUsernamePasswordException {
         Students students = studentRepository.getStudents(username);
         if (students == null)
             throw new UserNotFoundException("user with given username :-- " + username + " -- not found.");
@@ -22,6 +22,7 @@ public class StudentService {
         } else{
             throw new InvalidUsernamePasswordException("password is wrong.");
         }
+        return students;
     }
     public Students findById(Long id){
         return studentRepository.findById(id);

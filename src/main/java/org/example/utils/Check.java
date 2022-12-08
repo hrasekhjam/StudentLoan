@@ -1,5 +1,7 @@
 package org.example.utils;
 
+import org.example.entity.enums.Degree;
+
 import java.util.Scanner;
 
 public class Check {
@@ -29,6 +31,20 @@ public class Check {
                 return lo =Long.parseLong(num);
          }
          System.out.println("try again");}
+     }
+
+     public int checkValue(Degree degree){
+        int value = 0;
+        switch (degree){
+            case KARDANI: value = 0;break;
+            case KARSHENASIPEYVASTE: value = 0;break;
+            case KARSHENASINAPEYVASTE: value = 0;break;
+            case KARSHENASIARSHAD: value = 1;break;
+            case DOKTORAYHERFEI: value = 1;break;
+            case DOKTORAYPEYVASTE: value = 1;break;
+            case DOKTORAYTAKHASOSINAPEYVASTE: value = 2;break;
+        }
+        return value;
      }
 
 }

@@ -1,7 +1,10 @@
 package org.example;
 
+import org.example.entity.Loans;
 import org.example.entity.Students;
 import org.example.entity.enums.Degree;
+import org.example.entity.enums.LoanType;
+import org.example.entity.enums.TuitionLoan;
 import org.example.entity.enums.UniType;
 import org.example.menu.Menus;
 import org.example.service.StudentService;
@@ -12,18 +15,19 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Menus menu = new Menus();
-
-        menu.firstMenu();
+//        Menus menu = new Menus();
         menu1run();
     }
-    public static void menu1run() {
-        Scanner scanner = new Scanner(System.in);
-        Check check = new Check();
-        Menus menu = new Menus();
-        Students students = new Students();
-        StudentService studentService = new StudentService();
+    static Scanner scanner = new Scanner(System.in);
+    static Students students = new Students();
+    static Degree degreeSet;
 
+    static StudentService studentService = new StudentService();
+    public static void menu1run() {
+        Menus menu = new Menus();
+        Check check = new Check();
+
+        menu.firstMenu();
         switch (scanner.nextInt()) {
             case 1:
                 System.out.println("Enter Name: ");
@@ -97,20 +101,71 @@ public class Main {
                 students.setPassWord(generatePassword(8));
                 students.setUserName(String.valueOf(students.getNationNumber()));
                 studentService.register(students);
-
+                System.out.println("Your registration has been completed."+"\n"+"Your password : "+students.getPassWord()+"\n"+"The UserName is the national code without zero");
                 menu1run();
             case 2:
                 System.out.println("Enter Username : ");
                 String user = scanner.next();
                 System.out.println("Enter password : ");
                 String pass = scanner.next();
-                studentService.loginUser(user,pass);
+                students = studentService.loginUser(user,pass);
+                degreeSet = students.getDegree();
 
                 System.out.println("Log in successfully");
-                menu.secondMenu();
+               break;
+        }
+        menu2run();
+    }
+    public static void menu2run() {
+        Menus menu = new Menus();
+        Loans loans = new Loans();
+        Check check = new Check();
+
+        menu.dashboardMenu();
+        switch (scanner.nextInt()) {
+            case 1:
+//                menu3run();
+                System.out.println("Your Degree is : "+ degreeSet);
+                System.out.println("Which one do you want to choose?");
+                System.out.println("// 1* tuition //"+"\n"+"// 2* Education //"+"\n"+"// 3* Housing //");
+                if(scanner.nextInt()==1){
+                    loans.setLoanType(LoanType.TUITION);
+                    switch (check.checkValue(degreeSet)){
+                        case 0: loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());break;
+                        case 1: loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());break;
+                        case 2: loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());break;
+                    }
+                }
+                System.out.println("For "+degreeSet+" : "+loans.getLoanAmount()+" Toman Ast.");
+
+            case 2:
+
+            case 3:
+
+            case 4:
+                menu1run();
         }
     }
 
+    public static void menu3run() {
+        Scanner scanner = new Scanner(System.in);
+        Check check = new Check();
+        Menus menu = new Menus();
+        Students students = new Students();
+        StudentService studentService = new StudentService();
+
+        menu.thirdMenu();
+        switch (scanner.nextInt()) {
+            case 1:
+
+            case 2:
+
+            case 3:
+
+            case 4:
+                menu2run();
+        }
+    }
     private static String generatePassword(int length) {
         String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
