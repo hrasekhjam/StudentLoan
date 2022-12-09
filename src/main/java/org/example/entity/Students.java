@@ -26,6 +26,16 @@ public class Students extends BaseEntity{
     private Long sh_Number;
     private Long nationNumber;
     private String birthDate;
+    private boolean isMarried;
+    private String city;
+    private String idCard;
+    private String cvv2;
+    private String cardPassword;
+    private String partnerName;
+    private String partnerLastName;
+    private String partnerFatherName;
+    private Long partnerNationNumber;
+    private String partnerBirthDate;
     private Long studentId;
     @Column(name = "university_name")
     private String uniName;
@@ -36,8 +46,5 @@ public class Students extends BaseEntity{
     private String userName;
     private String passWord;
 
-//    public Students() {
-//        Password password = new Password(8);
-//        setPassWord(password);
-//    }
+
 }

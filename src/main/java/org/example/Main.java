@@ -2,10 +2,7 @@ package org.example;
 
 import org.example.entity.Loans;
 import org.example.entity.Students;
-import org.example.entity.enums.Degree;
-import org.example.entity.enums.LoanType;
-import org.example.entity.enums.TuitionLoan;
-import org.example.entity.enums.UniType;
+import org.example.entity.enums.*;
 import org.example.menu.Menus;
 import org.example.service.StudentService;
 import org.example.utils.Check;
@@ -18,15 +15,18 @@ public class Main {
 //        Menus menu = new Menus();
         menu1run();
     }
+
     static Scanner scanner = new Scanner(System.in);
     static Students students = new Students();
     static Degree degreeSet;
+    static Long studentIdSet;
 
     static StudentService studentService = new StudentService();
+
     public static void menu1run() {
         Menus menu = new Menus();
         Check check = new Check();
-
+//        System.out.println(check.checkDeadLineDate());//todo check deadline
         menu.firstMenu();
         switch (scanner.nextInt()) {
             case 1:
@@ -44,6 +44,11 @@ public class Main {
                 students.setNationNumber(check.checkNumberSize());
                 System.out.println("Enter Birth Date: " + "\n" + "(Ex. yy/mm/dd)");
                 students.setBirthDate(scanner.next());
+                System.out.println("Enter Your Married Status :   (married/single) ");
+                if (scanner.next().equalsIgnoreCase("married"))students.setMarried(true);
+                if (scanner.next().equalsIgnoreCase("single"))students.setMarried(false);
+                System.out.println("Enter Your City Name: ");
+                students.setCity(check.checkAlphabet());
                 System.out.println("Enter Student Id: ");
                 students.setStudentId(check.checkNumberSize());
                 System.out.println("Enter University Name: ");
@@ -101,21 +106,23 @@ public class Main {
                 students.setPassWord(generatePassword(8));
                 students.setUserName(String.valueOf(students.getNationNumber()));
                 studentService.register(students);
-                System.out.println("Your registration has been completed."+"\n"+"Your password : "+students.getPassWord()+"\n"+"The UserName is the national code without zero");
+                System.out.println("Your registration has been completed." + "\n" + "Your password : " + students.getPassWord() + "\n" + "The UserName is the national code without zero");
                 menu1run();
             case 2:
                 System.out.println("Enter Username : ");
                 String user = scanner.next();
                 System.out.println("Enter password : ");
                 String pass = scanner.next();
-                students = studentService.loginUser(user,pass);
+                students = studentService.loginUser(user, pass);
                 degreeSet = students.getDegree();
+                studentIdSet = students.getId();
 
                 System.out.println("Log in successfully");
-               break;
+                break;
         }
         menu2run();
     }
+
     public static void menu2run() {
         Menus menu = new Menus();
         Loans loans = new Loans();
@@ -124,20 +131,86 @@ public class Main {
         menu.dashboardMenu();
         switch (scanner.nextInt()) {
             case 1:
-//                menu3run();
-                System.out.println("Your Degree is : "+ degreeSet);
+                System.out.println("Your Degree is : " + degreeSet);
                 System.out.println("Which one do you want to choose?");
-                System.out.println("// 1* tuition //"+"\n"+"// 2* Education //"+"\n"+"// 3* Housing //");
-                if(scanner.nextInt()==1){
+                System.out.println("// 1* tuition //" + "\n" + "// 2* Education //" + "\n" + "// 3* Housing //");
+                if (scanner.nextInt() == 1) {
                     loans.setLoanType(LoanType.TUITION);
-                    switch (check.checkValue(degreeSet)){
-                        case 0: loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());break;
-                        case 1: loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());break;
-                        case 2: loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());break;
+                    switch (check.checkValue(degreeSet)) {
+                        case 0:
+                            loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
+                            break;
+                        case 1:
+                            loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
+                            break;
+                        case 2:
+                            loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
+                            break;
                     }
                 }
-                System.out.println("For "+degreeSet+" : "+loans.getLoanAmount()+" Toman Ast.");
+                if (scanner.nextInt() == 2) {
+                    loans.setLoanType(LoanType.EDUCATION);
+                    switch (check.checkValue(degreeSet)) {
+                        case 0:
+                            loans.setLoanAmount(EducationLoan.MAGHTA1.getAction());
+                            break;
+                        case 1:
+                            loans.setLoanAmount(EducationLoan.MAGHTA2.getAction());
+                            break;
+                        case 2:
+                            loans.setLoanAmount(EducationLoan.MAGHTA3.getAction());
+                            break;
+                    }
+                }
+                if (scanner.nextInt() == 3) {
+                    if (students.isMarried()) {
+                        loans.setLoanType(LoanType.HOUSING);//todo
+                        switch (check.checkValue(degreeSet)) {
+                            case 0:
+                                loans.setLoanAmount(HousingLoan.MAGHTA1.getAction());
+                                break;
+                            case 1:
+                                loans.setLoanAmount(HousingLoan.MAGHTA2.getAction());
+                                break;
+                            case 2:
+                                loans.setLoanAmount(HousingLoan.MAGHTA3.getAction());
+                                break;
+                        }
+                    }else System.out.println("You cannot register this loan");
+                }
 
+                if (students.getUniType().equals(UniType.DOLATIROZANE)) {
+                    System.out.println("Your University type is : " + students.getUniType() + ". You cannot register this loan");
+                    break;
+                } else
+                    System.out.println("For " + degreeSet + " : " + loans.getLoanAmount() + " Toman Ast." + "\n" + "Continue press 1" + "\n" + "Else press 0");
+                if (scanner.nextInt() == 1) {
+                    if (loans.getLoanType().equals(LoanType.HOUSING)) {
+                        System.out.println("Enter Partner Name: ");
+                        students.setPartnerName(check.checkAlphabet());
+                        System.out.println("Enter Partner Last Name: ");
+                        students.setPartnerLastName(check.checkAlphabet());
+                        System.out.println("Enter Partner Father Name: ");
+                        students.setPartnerFatherName(check.checkAlphabet());
+                        System.out.println("Enter Partner Nation Number: ");
+                        students.setPartnerNationNumber(check.checkNumberSize());
+                        System.out.println("Enter Partner Birth Date: " + "\n" + "(Ex. yy/mm/dd)");
+                        students.setPartnerBirthDate(scanner.next());
+                        studentService.updateUser(students,studentIdSet);
+                    }
+                        if (students.getIdCard().isEmpty()) {
+                             System.out.println("Add Your Card" + "\n" + "Enter Card Number :");
+                             students.setIdCard(scanner.next());
+                             System.out.println("Enter cvv2 :");
+                             students.setIdCard(scanner.next());
+                             System.out.println("Enter Card Password :");
+                             students.setIdCard(scanner.next());
+                             studentService.updateUser(students, studentIdSet);
+                        }
+                } else menu.dashboardMenu();
+//                break;
+            System.out.println(loans.getLoanType() + " Loans is registered");
+            menu.dashboardMenu();
             case 2:
 
             case 3:
@@ -166,6 +239,7 @@ public class Main {
                 menu2run();
         }
     }
+
     private static String generatePassword(int length) {
         String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";

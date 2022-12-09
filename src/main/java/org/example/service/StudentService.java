@@ -24,7 +24,10 @@ public class StudentService {
         }
         return students;
     }
-    public Students findById(Long id){
-        return studentRepository.findById(id);
+    public void updateUser(Students students , Long id){
+        studentRepository.update(students,id);
     }
+//    public Students findById(Long id){
+//        return studentRepository.findById(id);
+//    }
 }

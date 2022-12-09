@@ -2,6 +2,7 @@ package org.example.utils;
 
 import org.example.entity.enums.Degree;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Check {
@@ -46,5 +47,16 @@ public class Check {
         }
         return value;
      }
+     public boolean checkDeadLineDate(){
+         LocalDate dateNow = LocalDate.now();
+         LocalDate date1 = LocalDate.parse("2022-10-23");//1st Aban
+         LocalDate pDate1 = date1.plusDays(8); ;//8st Aban
+         LocalDate date2 = LocalDate.parse("2023-02-14");//25th Bahman
+         LocalDate pDate2 = date2.plusDays(8); ;//2nd Esfand
+         return dateNow.isAfter(date1) && dateNow.isBefore(pDate1)
+                 || dateNow.isAfter(date2) && dateNow.isBefore(pDate2);
+     }
+
+     public
 
 }
