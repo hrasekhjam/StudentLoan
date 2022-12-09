@@ -16,10 +16,12 @@ public class Loans extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     private LoanType loanType;
     private String loanAmount;
     @Column(name = "Date")
     private LocalDate date = LocalDate.now();
+
 
     @ManyToOne
     private Students students;

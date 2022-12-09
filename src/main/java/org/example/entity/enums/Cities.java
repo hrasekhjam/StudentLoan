@@ -9,6 +9,5 @@ public enum Cities {
     MASHHAD,
     TABRIZ,
     SHIRAZ,
-    AHVAZ,
-    OTHER;
+    AHVAZ;
 }

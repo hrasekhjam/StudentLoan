@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import org.example.entity.enums.Cities;
 import org.example.entity.enums.Degree;
 
 import java.time.LocalDate;
@@ -23,11 +24,11 @@ public class Check {
          System.out.println("try again");}
      }
 
-     public Long checkNumberSize(){
+     public Long checkNumberSize(int i){
      while (true){
          String num = scanner.next();
          Long lo;
-         if(String.valueOf(num).length() == 10){
+         if(String.valueOf(num).length() == i){
              if (!String.valueOf(num).matches("[a-zA-Z][!@#$%^&*()/_=+.,`~]+"))
                 return lo =Long.parseLong(num);
          }
@@ -57,6 +58,15 @@ public class Check {
                  || dateNow.isAfter(date2) && dateNow.isBefore(pDate2);
      }
 
-     public
+     public String checkCity(String string){
+        String city = "";
+        if (string.equalsIgnoreCase("tehran"))
+             city = "tehran";
+         for (Cities c : Cities.values()) {
+             if (c.name().equalsIgnoreCase(string))  city = "metropolis";
+             else  city = "other";
+         }
+         return city;
+     }
 
 }

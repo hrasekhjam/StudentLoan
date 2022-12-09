@@ -17,6 +17,7 @@
 
 
         <mapping class="org.example.entity.Students" />
+        <mapping class="org.example.entity.Loans" />
 
     </session-factory>
 </hibernate-configuration>
