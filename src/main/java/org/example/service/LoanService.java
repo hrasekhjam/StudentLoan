@@ -2,11 +2,11 @@ package org.example.service;
 
 import org.example.entity.Loans;
 import org.example.entity.Students;
-import org.example.exceptions.InvalidUsernamePasswordException;
-import org.example.exceptions.UserNotFoundException;
 import org.example.repository.LoanRepository;
-import org.example.repository.StudentRepository;
-import org.example.securiy.SecurityUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import java.util.List;
 
 public class LoanService {
     LoanRepository loanRepository = new LoanRepository();
@@ -18,7 +18,8 @@ public class LoanService {
     public void updateUser(Loans loans , Long id){
         loanRepository.update(loans,id);
     }
-//    public Students findById(Long id){
-//        return studentRepository.findById(id);
-//    }
+    public List<Loans> findAllLoansById(Students st){
+        return loanRepository.findAll(st);
+    }
+
 }

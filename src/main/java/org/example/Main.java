@@ -7,6 +7,7 @@ import org.example.menu.Menus;
 import org.example.service.LoanService;
 import org.example.service.StudentService;
 import org.example.utils.Check;
+import org.example.utils.InstallmentCalculation;
 
 import java.util.Objects;
 import java.util.Random;
@@ -130,7 +131,7 @@ public class Main {
         Menus menu = new Menus();
         Loans loans = new Loans();
         Check check = new Check();
-
+        InstallmentCalculation ic = new InstallmentCalculation();
         menu.dashboardMenu();
         switch (scanner.nextInt()) {
             case 1:
@@ -219,9 +220,22 @@ public class Main {
             System.out.println(loans.getLoanType() + " Loans is registered");
                 menu2run();
             case 2:
-
+                System.out.println("// 1* Installments paid" +"\n"+ //قسط پرداخت شده
+                        "// 2* Pay Installments");// پرداخت
+                int input2 = scanner.nextInt();
+                if (input2 == 1){
+                    //todo
+                }
+                if (input2 == 2){
+                    int installmentValue = ic.calculation();
+                }
             case 3:
-
+                System.out.println("Your Loans is : ");
+                for (Loans allLoans: loanService.findAllLoansById(students)) {
+                    System.out.println(allLoans.getLoanType()+" : "+allLoans.getLoanAmount()+" Toman "+
+                            "\n"+"--------------");
+                }
+                menu2run();
             case 4:
                 menu1run();
         }
