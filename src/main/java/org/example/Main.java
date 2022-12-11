@@ -1,9 +1,11 @@
 package org.example;
 
+import org.example.entity.Installment;
 import org.example.entity.Loans;
 import org.example.entity.Students;
 import org.example.entity.enums.*;
 import org.example.menu.Menus;
+import org.example.service.InstallmentService;
 import org.example.service.LoanService;
 import org.example.service.StudentService;
 import org.example.utils.Check;
@@ -26,6 +28,7 @@ public class Main {
 
     static StudentService studentService = new StudentService();
     static LoanService loanService = new LoanService();
+    static InstallmentService installmentService = new InstallmentService();
 
     public static void menu1run() {
         Menus menu = new Menus();
@@ -130,6 +133,7 @@ public class Main {
     public static void menu2run() {
         Menus menu = new Menus();
         Loans loans = new Loans();
+        Installment installment = new Installment();
         Check check = new Check();
         InstallmentCalculation ic = new InstallmentCalculation();
         menu.dashboardMenu();
@@ -141,41 +145,56 @@ public class Main {
                 int input = scanner.nextInt();
                 if (input == 1) {
                     loans.setLoanType(LoanType.TUITION);
+                    installment.setLoanType(LoanType.TUITION);
                     switch (check.checkValue(degreeSet)) {
                         case 0:
                             loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
+                            installment.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
                             break;
                         case 1:
                             loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
+                            installment.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
                             break;
                         case 2:
                             loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
+                            installment.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
                             break;
                     }
                 }
                 if (input == 2) {
                     loans.setLoanType(LoanType.EDUCATION);
+                    installment.setLoanType(LoanType.EDUCATION);
                     switch (check.checkValue(degreeSet)) {
                         case 0:
                             loans.setLoanAmount(EducationLoan.MAGHTA1.getAction());
+                            installment.setLoanAmount(EducationLoan.MAGHTA1.getAction());
                             break;
                         case 1:
                             loans.setLoanAmount(EducationLoan.MAGHTA2.getAction());
+                            installment.setLoanAmount(EducationLoan.MAGHTA2.getAction());
                             break;
                         case 2:
                             loans.setLoanAmount(EducationLoan.MAGHTA3.getAction());
+                            installment.setLoanAmount(EducationLoan.MAGHTA3.getAction());
                             break;
                     }
                 }
                 if (input == 3) {
                     if (students.isMarried()) {
                         loans.setLoanType(LoanType.HOUSING);
-                        if (check.checkCity(students.getCity()).equals("tehran"))
+                        installment.setLoanType(LoanType.HOUSING);
+                        if (check.checkCity(students.getCity()).equals("tehran")){
                             loans.setLoanAmount(HousingLoan.TEHRAN.getAction());
-                       if (check.checkCity(students.getCity()).equals("metropolis"))
+                            installment.setLoanAmount(HousingLoan.TEHRAN.getAction());
+                        }
+                       if (check.checkCity(students.getCity()).equals("metropolis")){
                             loans.setLoanAmount(HousingLoan.METROPOLIS.getAction());
-                       if (check.checkCity(students.getCity()).equals("other"))
+                           installment.setLoanAmount(HousingLoan.METROPOLIS.getAction());
+                       }
+                       if (check.checkCity(students.getCity()).equals("other")){
                             loans.setLoanAmount(HousingLoan.OTHER.getAction());
+                           installment.setLoanAmount(HousingLoan.OTHER.getAction());
+                       }
 
                     }else{
                         System.out.println("You cannot register this loan");
@@ -189,6 +208,11 @@ public class Main {
                 } else{
                     loans.setStudents(students);
                     loanService.createLoan(loans);
+                    installment.setDate(loans.getDate());
+                    installment.setFirstYear((long) ic.calculation(loans.getLoanAmount()));
+                    installment.setLoans(loans);
+                    installment.setStudents(students);
+                    installmentService.createInstallment(installment);
                     System.out.println("For " + degreeSet + " : " + loans.getLoanAmount() + " Toman Ast." + "\n" + "Continue press 1" + "\n" + "Else press 0");
                }
                 int input1 = scanner.nextInt();
@@ -227,7 +251,7 @@ public class Main {
                     //todo
                 }
                 if (input2 == 2){
-                    int installmentValue = ic.calculation();
+//                    int installmentValue = ic.calculation();
                 }
             case 3:
                 System.out.println("Your Loans is : ");
