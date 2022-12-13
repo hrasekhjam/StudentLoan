@@ -12,7 +12,7 @@ import java.util.List;
 
 public class InstallmentRepository extends BaseRepository<Installment>{
     public InstallmentRepository() {
-        super("Loans", Installment.class );
+        super("Installment", Installment.class );
     }
     public List<Installment> findAll(Students st) {
         Session session = sessionFactory.openSession();

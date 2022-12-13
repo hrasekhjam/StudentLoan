@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import org.example.entity.Students;
 import org.example.entity.enums.Cities;
 import org.example.entity.enums.Degree;
 
@@ -68,5 +69,4 @@ public class Check {
          }
          return city;
      }
-
 }

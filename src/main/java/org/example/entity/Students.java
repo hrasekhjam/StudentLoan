@@ -2,10 +2,8 @@ package org.example.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import org.example.entity.enums.Degree;
 import org.example.entity.enums.UniType;
-import org.example.utils.Password;
 
 import javax.persistence.*;
 @Setter
@@ -28,7 +26,7 @@ public class Students extends BaseEntity{
     private String birthDate;
     private boolean isMarried;
     private String city;
-    private String idCard;
+    private String cardNumber;
     private String cvv2;
     private String cardPassword;
     private String partnerName;

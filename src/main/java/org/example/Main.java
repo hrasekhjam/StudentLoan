@@ -2,22 +2,22 @@ package org.example;
 
 import org.example.entity.Installment;
 import org.example.entity.Loans;
+import org.example.entity.PayedInstallment;
 import org.example.entity.Students;
 import org.example.entity.enums.*;
 import org.example.menu.Menus;
 import org.example.service.InstallmentService;
 import org.example.service.LoanService;
+import org.example.service.PayedInstallmentService;
 import org.example.service.StudentService;
 import org.example.utils.Check;
 import org.example.utils.InstallmentCalculation;
 
-import java.util.Objects;
-import java.util.Random;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-//        Menus menu = new Menus();
         menu1run();
     }
 
@@ -29,6 +29,7 @@ public class Main {
     static StudentService studentService = new StudentService();
     static LoanService loanService = new LoanService();
     static InstallmentService installmentService = new InstallmentService();
+    static PayedInstallmentService payedInstallmentService = new PayedInstallmentService();
 
     public static void menu1run() {
         Menus menu = new Menus();
@@ -52,7 +53,7 @@ public class Main {
                 System.out.println("Enter Birth Date: " + "\n" + "(Ex. yy/mm/dd)");
                 students.setBirthDate(scanner.next());
                 System.out.println("Enter Your Married Status :   (married/single) ");
-                if (scanner.next().equalsIgnoreCase("married"))students.setMarried(true);
+                if (scanner.next().equalsIgnoreCase("married"))students.setMarried(true);//todo
                 else if (scanner.next().equalsIgnoreCase("single"))students.setMarried(false);
                 System.out.println("Enter Your City Name: ");
                 students.setCity(check.checkAlphabet());
@@ -136,6 +137,8 @@ public class Main {
         Installment installment = new Installment();
         Check check = new Check();
         InstallmentCalculation ic = new InstallmentCalculation();
+        PayedInstallment payedInstallment = new PayedInstallment();
+
         menu.dashboardMenu();
         switch (scanner.nextInt()) {
             case 1:
@@ -230,9 +233,9 @@ public class Main {
                         students.setPartnerBirthDate(scanner.next());
                         studentService.updateUser(students,studentIdSet);
                     }
-                        if (Objects.equals(students.getIdCard() , null)) {
+                        if (Objects.equals(students.getCardNumber() , null)) {
                              System.out.println("Add Your Card" + "\n" + "Enter Card Number :");
-                             students.setIdCard(scanner.next());
+                             students.setCardNumber(scanner.next());
                              System.out.println("Enter cvv2 :");
                              students.setCvv2(scanner.next());
                              System.out.println("Enter Card Password :");
@@ -248,7 +251,10 @@ public class Main {
                         "// 2* Pay Installments");// پرداخت
                 int input2 = scanner.nextInt();
                 if (input2 == 1){
-                    //todo
+                    for (PayedInstallment payedInst : payedInstallmentService.findAllPayedInstallment(students)) {
+                        System.out.println("Installment on "+payedInst.getInstallmentDate()+" date for "+payedInst.getInstallmentAmount()+" amount on "+payedInst.getLocalDate()+" date");
+                    }
+                    menu2run();
                 }
                 if (input2 == 2) {
                     System.out.println("Your Detail Loan : ");
@@ -265,22 +271,43 @@ public class Main {
                     if (loan.equalsIgnoreCase("HOUSING")) lnt = LoanType.HOUSING;
                     if (loan.equalsIgnoreCase("EDUCATION")) lnt = LoanType.EDUCATION;
                     if (loan.equalsIgnoreCase("TUITION")) lnt = LoanType.TUITION;
-                    System.out.println("Choose Year Of would you pay :   (between 1 to 5");
+                    System.out.println("Choose Year Of would you pay :   (between 1 to 5)");
                     int yearLoan = scanner.nextInt();
                     Installment inst = installmentService.findInstallment(students, lnt);
-                    if (yearLoan == 1) year = inst.getFirstYear();
-                    if (yearLoan == 2) year = inst.getSecondYear();
-                    if (yearLoan == 3) year = inst.getThirdYear();
-                    if (yearLoan == 4) year = inst.getFourthYear();
-                    if (yearLoan == 5) year = inst.getFifthYear();
-                    ic.installmentTimePay(inst.getDate(),year);
+                    if (yearLoan == 1) yearAmount = inst.getFirstYear();
+                    if (yearLoan == 2) yearAmount = inst.getSecondYear();
+                    if (yearLoan == 3) yearAmount = inst.getThirdYear();
+                    if (yearLoan == 4) yearAmount = inst.getFourthYear();
+                    if (yearLoan == 5) yearAmount = inst.getFifthYear();
+                    List<LocalDate> installmentDate = ic.installmentTimePay(inst.getDate(),yearLoan);
+                    for (LocalDate ld : installmentDate) {
+                        System.out.println(ld+"    "+ yearAmount+" Toman");
+                    }
+
 
                     System.out.println("Choose Month : ");
                     int monthLoan = scanner.nextInt();
                     System.out.println("-----------------"+"\n"+
-                            "Loan : "+lnt+" Year : "+yearLoan+" Month : "+monthLoan);
-
+                            "Loan : "+lnt+" Year : "+yearLoan+" Month : "+installmentDate.get(monthLoan-1));
+                    while (true){
+                        System.out.println("Enter Card Number:");
+                        String inp1 = scanner.next();
+                        System.out.println("Enter Card Password:");
+                        String inp2 = scanner.next();
+                        System.out.println("Enter Card cvv2:");
+                        String inp3 = scanner.next();
+                        if (!((inp1.equals(students.getCardNumber()))&&(inp2.equals(students.getCardPassword()))&&(inp3.equals(students.getCvv2()))))
+                            System.out.println("Your Card is Incorrect");
+                        else break;
+                    }
+                    payedInstallment.setInstallmentDate(installmentDate.get(monthLoan-1));
+                    payedInstallment.setInstallmentAmount(yearAmount);
+                    payedInstallment.setLoanType(lnt);
+                    payedInstallment.setStudents(students);
+                    payedInstallmentService.createInstallmentPayed(payedInstallment);
+                     System.out.println("Payment Done");
                 }
+                menu2run();
             case 3:
                 System.out.println("Your Loans is : ");
                 for (Loans allLoans: loanService.findAllLoansById(students)) {
@@ -314,7 +341,7 @@ public class Main {
     }
 
     public static LoanType lnt ;
-    public static Long year ;
+    public static Long yearAmount;
 
     private static String generatePassword(int length) {
         String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

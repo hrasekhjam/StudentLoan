@@ -5,6 +5,8 @@ import org.example.entity.enums.LoanType;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InstallmentCalculation {
 
@@ -23,11 +25,12 @@ public class InstallmentCalculation {
         return (int) (loanAmount / ((math1 + 1) * math2) + (math3 * math4));
     }
 
-    public void installmentTimePay(LocalDate time,Long amount){
-        String times = time.format(DateTimeFormatter.ISO_DATE);
-        System.out.println(time);
+    public List<LocalDate> installmentTimePay(LocalDate localDate, int year){
+        List<LocalDate> timeForPay = new ArrayList<>();
+        LocalDate time = localDate.plusYears(year - 1);
         for (int i = 1; i <= 12; i++) {
-            System.out.println(i+" --> "+time.plusMonths(i)+"     "+amount+" Toman");
+            timeForPay.add(time.plusMonths(i));
         }
+        return timeForPay;
     }
 }
