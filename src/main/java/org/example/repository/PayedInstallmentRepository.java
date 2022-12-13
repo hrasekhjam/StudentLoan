@@ -15,14 +15,14 @@ public class PayedInstallmentRepository extends BaseRepository<PayedInstallment>
         super("PayedInstallment", PayedInstallment.class );
     }
     public List<PayedInstallment> findAll(Students st) {
+
         Session session = sessionFactory.openSession();
         Query query = session.createQuery("select p from PayedInstallment p where p.students=:students")
                 .setParameter("students",st);
         List list = query.list();
         session.close();
-        if (list.isEmpty())
-            return null;
-
+            if (list.isEmpty())
+                return null;
         return list;
     }
 //    public Installment findInst(Students st,LoanType loanType) {

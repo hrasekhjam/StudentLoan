@@ -43,6 +43,7 @@ public class Students extends BaseEntity{
     private Degree degree;
     private String userName;
     private String passWord;
+//    private boolean graduated;
 
 
 }

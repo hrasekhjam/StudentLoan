@@ -1,10 +1,13 @@
 package org.example.utils;
 
+import org.example.entity.Loans;
 import org.example.entity.Students;
 import org.example.entity.enums.Cities;
 import org.example.entity.enums.Degree;
+import org.example.entity.enums.LoanType;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 public class Check {
@@ -69,4 +72,36 @@ public class Check {
          }
          return city;
      }
+
+     public boolean checkGraduation(Long x,Degree degree){
+        LocalDate nowDate = LocalDate.now().minusYears(621);
+        int educationalYear = 0;
+        switch (degree){
+            case KARDANI: educationalYear = 2;break;
+            case KARSHENASIPEYVASTE: educationalYear = 4;break;
+            case KARSHENASINAPEYVASTE: educationalYear = 4;break;
+            case KARSHENASIARSHAD: educationalYear = 2;break;
+            case DOKTORAYHERFEI: educationalYear = 5;break;
+            case DOKTORAYPEYVASTE: educationalYear = 5;break;
+            case DOKTORAYTAKHASOSINAPEYVASTE: educationalYear = 5;break;
+        }
+         return educationalYear + x <= (nowDate.getYear());
+     }
+
+    public boolean checkLoan(List<Loans> loans,int input){
+
+        for (Loans loan : loans) {
+            if (input == 1)
+                if (loan.getLoanType().equals(LoanType.TUITION))
+                    return false;
+            if (input == 2)
+                if (loan.getLoanType().equals(LoanType.EDUCATION))
+                    return false;
+            if (input == 3)
+                if (loan.getLoanType().equals(LoanType.HOUSING))
+                    return false;
+
+        }
+        return true;
+    }
 }

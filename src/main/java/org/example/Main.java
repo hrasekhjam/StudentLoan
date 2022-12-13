@@ -113,6 +113,8 @@ public class Main {
                 }
                 students.setPassWord(generatePassword(8));
                 students.setUserName(String.valueOf(students.getNationNumber()));
+//                students.setGraduated(check.checkGraduation(students.getYearOfUniEntrance(),students.getDegree()));
+//                System.out.println(check.checkGraduation(students.getYearOfUniEntrance(), students.getDegree()));
                 studentService.register(students);
                 System.out.println("Your registration has been completed." + "\n" + "Your password : " + students.getPassWord() + "\n" + "The UserName is the national code without zero");
                 menu1run();
@@ -142,117 +144,131 @@ public class Main {
         menu.dashboardMenu();
         switch (scanner.nextInt()) {
             case 1:
-                System.out.println("Your Degree is : " + degreeSet);
-                System.out.println("Which one do you want to choose?");
-                System.out.println("// 1* tuition //" + "\n" + "// 2* Education //" + "\n" + "// 3* Housing //");
-                int input = scanner.nextInt();
-                if (input == 1) {
-                    loans.setLoanType(LoanType.TUITION);
-                    installment.setLoanType(LoanType.TUITION);
-                    switch (check.checkValue(degreeSet)) {
-                        case 0:
-                            loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
-                            installment.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
-                            break;
-                        case 1:
-                            loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
-                            installment.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
-                            break;
-                        case 2:
-                            loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
-                            installment.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
-                            break;
-                    }
-                }
-                if (input == 2) {
-                    loans.setLoanType(LoanType.EDUCATION);
-                    installment.setLoanType(LoanType.EDUCATION);
-                    switch (check.checkValue(degreeSet)) {
-                        case 0:
-                            loans.setLoanAmount(EducationLoan.MAGHTA1.getAction());
-                            installment.setLoanAmount(EducationLoan.MAGHTA1.getAction());
-                            break;
-                        case 1:
-                            loans.setLoanAmount(EducationLoan.MAGHTA2.getAction());
-                            installment.setLoanAmount(EducationLoan.MAGHTA2.getAction());
-                            break;
-                        case 2:
-                            loans.setLoanAmount(EducationLoan.MAGHTA3.getAction());
-                            installment.setLoanAmount(EducationLoan.MAGHTA3.getAction());
-                            break;
-                    }
-                }
-                if (input == 3) {
-                    if (students.isMarried()) {
-                        loans.setLoanType(LoanType.HOUSING);
-                        installment.setLoanType(LoanType.HOUSING);
-                        if (check.checkCity(students.getCity()).equals("tehran")){
-                            loans.setLoanAmount(HousingLoan.TEHRAN.getAction());
-                            installment.setLoanAmount(HousingLoan.TEHRAN.getAction());
-                        }
-                       if (check.checkCity(students.getCity()).equals("metropolis")){
-                            loans.setLoanAmount(HousingLoan.METROPOLIS.getAction());
-                           installment.setLoanAmount(HousingLoan.METROPOLIS.getAction());
-                       }
-                       if (check.checkCity(students.getCity()).equals("other")){
-                            loans.setLoanAmount(HousingLoan.OTHER.getAction());
-                           installment.setLoanAmount(HousingLoan.OTHER.getAction());
-                       }
-
-                    }else{
-                        System.out.println("You cannot register this loan");
+                if (!check.checkDeadLineDate()){ System.out.println("Please Return At Correct Time!");
+                menu2run();}
+                else {
+                    List<Loans> allLoansById = loanService.findAllLoansById(students);
+                    System.out.println("Your Degree is : " + degreeSet);
+                    System.out.println("Which one do you want to choose?");
+                    System.out.println("// 1* tuition //" + "\n" + "// 2* Education //" + "\n" + "// 3* Housing //");
+                    int input = scanner.nextInt();
+                    if (!check.checkLoan(allLoansById,input)){
+                        System.out.println("Already Loan in Your Account");
                         menu2run();
-                    }
-                }
-
-                if (students.getUniType().equals(UniType.DOLATIROZANE)) {
-                    System.out.println("Your University type is : " + students.getUniType() + ". You cannot register this loan");
-                    menu2run();
-                } else{
-                    loans.setStudents(students);
-                    loanService.createLoan(loans);
-                    installment.setDate(loans.getDate());
-                    installment.setFirstYear((long) ic.calculation(loans.getLoanAmount()));
-                    installment.setLoans(loans);
-                    installment.setStudents(students);
-                    installmentService.createInstallment(installment);
-                    System.out.println("For " + degreeSet + " : " + loans.getLoanAmount() + " Toman Ast." + "\n" + "Continue press 1" + "\n" + "Else press 0");
-               }
-                int input1 = scanner.nextInt();
-                if (input1 == 1) {
-                    if (loans.getLoanType().equals(LoanType.HOUSING)) {
-                        System.out.println("Enter Partner Name: ");
-                        students.setPartnerName(check.checkAlphabet());
-                        System.out.println("Enter Partner Last Name: ");
-                        students.setPartnerLastName(check.checkAlphabet());
-                        System.out.println("Enter Partner Father Name: ");
-                        students.setPartnerFatherName(check.checkAlphabet());
-                        System.out.println("Enter Partner Nation Number: ");
-                        students.setPartnerNationNumber(check.checkNumberSize(10));
-                        System.out.println("Enter Partner Birth Date: " + "\n" + "(Ex. yy/mm/dd)");
-                        students.setPartnerBirthDate(scanner.next());
-                        studentService.updateUser(students,studentIdSet);
-                    }
-                        if (Objects.equals(students.getCardNumber() , null)) {
-                             System.out.println("Add Your Card" + "\n" + "Enter Card Number :");
-                             students.setCardNumber(scanner.next());
-                             System.out.println("Enter cvv2 :");
-                             students.setCvv2(scanner.next());
-                             System.out.println("Enter Card Password :");
-                             students.setCardPassword(scanner.next());
-                             studentService.updateUser(students, studentIdSet);
+                    }else {
+                        if (input == 1) {
+                            loans.setLoanType(LoanType.TUITION);
+                            installment.setLoanType(LoanType.TUITION);
+                            switch (check.checkValue(degreeSet)) {
+                                case 0:
+                                    loans.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
+                                    installment.setLoanAmount(TuitionLoan.MAGHTA1.getAction());
+                                    break;
+                                case 1:
+                                    loans.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
+                                    installment.setLoanAmount(TuitionLoan.MAGHTA2.getAction());
+                                    break;
+                                case 2:
+                                    loans.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
+                                    installment.setLoanAmount(TuitionLoan.MAGHTA3.getAction());
+                                    break;
+                            }
                         }
-                } else menu2run();
+                        if (input == 2) {
+                            loans.setLoanType(LoanType.EDUCATION);
+                            installment.setLoanType(LoanType.EDUCATION);
+                            switch (check.checkValue(degreeSet)) {
+                                case 0:
+                                    loans.setLoanAmount(EducationLoan.MAGHTA1.getAction());
+                                    installment.setLoanAmount(EducationLoan.MAGHTA1.getAction());
+                                    break;
+                                case 1:
+                                    loans.setLoanAmount(EducationLoan.MAGHTA2.getAction());
+                                    installment.setLoanAmount(EducationLoan.MAGHTA2.getAction());
+                                    break;
+                                case 2:
+                                    loans.setLoanAmount(EducationLoan.MAGHTA3.getAction());
+                                    installment.setLoanAmount(EducationLoan.MAGHTA3.getAction());
+                                    break;
+                            }
+                        }
+                        if (input == 3) {
+                            if (students.isMarried()) {
+                                loans.setLoanType(LoanType.HOUSING);
+                                installment.setLoanType(LoanType.HOUSING);
+                                if (check.checkCity(students.getCity()).equals("tehran")) {
+                                    loans.setLoanAmount(HousingLoan.TEHRAN.getAction());
+                                    installment.setLoanAmount(HousingLoan.TEHRAN.getAction());
+                                }
+                                if (check.checkCity(students.getCity()).equals("metropolis")) {
+                                    loans.setLoanAmount(HousingLoan.METROPOLIS.getAction());
+                                    installment.setLoanAmount(HousingLoan.METROPOLIS.getAction());
+                                }
+                                if (check.checkCity(students.getCity()).equals("other")) {
+                                    loans.setLoanAmount(HousingLoan.OTHER.getAction());
+                                    installment.setLoanAmount(HousingLoan.OTHER.getAction());
+                                }
 
-            System.out.println(loans.getLoanType() + " Loans is registered");
-                menu2run();
+                            } else {
+                                System.out.println("You cannot register this loan");
+                                menu2run();
+                            }
+                        }
+                    }
+                    if (students.getUniType().equals(UniType.DOLATIROZANE)) {
+                        System.out.println("Your University type is : " + students.getUniType() + ". You cannot register this loan");
+                        menu2run();
+                    } else {
+                        loans.setStudents(students);
+                        loanService.createLoan(loans);
+                        installment.setDate(loans.getDate());
+                        installment.setFirstYear((long) ic.calculation(loans.getLoanAmount()));
+                        installment.setLoans(loans);
+                        installment.setStudents(students);
+                        installmentService.createInstallment(installment);
+                        System.out.println("For " + degreeSet + " : " + loans.getLoanAmount() + " Toman Ast." + "\n" + "Continue press 1" + "\n" + "Else press 0");
+                    }
+                    int input1 = scanner.nextInt();
+                    if (input1 == 1) {
+                        if (loans.getLoanType().equals(LoanType.HOUSING)) {
+                            System.out.println("Enter Partner Name: ");
+                            students.setPartnerName(check.checkAlphabet());
+                            System.out.println("Enter Partner Last Name: ");
+                            students.setPartnerLastName(check.checkAlphabet());
+                            System.out.println("Enter Partner Father Name: ");
+                            students.setPartnerFatherName(check.checkAlphabet());
+                            System.out.println("Enter Partner Nation Number: ");
+                            students.setPartnerNationNumber(check.checkNumberSize(10));
+                            System.out.println("Enter Partner Birth Date: " + "\n" + "(Ex. yy/mm/dd)");
+                            students.setPartnerBirthDate(scanner.next());
+                            studentService.updateUser(students, studentIdSet);
+                        }
+                        if (Objects.equals(students.getCardNumber(), null)) {
+                            System.out.println("Add Your Card" + "\n" + "Enter Card Number :");
+                            students.setCardNumber(scanner.next());
+                            System.out.println("Enter cvv2 :");
+                            students.setCvv2(scanner.next());
+                            System.out.println("Enter Card Password :");
+                            students.setCardPassword(scanner.next());
+                            studentService.updateUser(students, studentIdSet);
+                        }
+                    } else menu2run();
+
+                    System.out.println(loans.getLoanType() + " Loans is registered");
+                    menu2run();
+                }
             case 2:
                 System.out.println("// 1* Installments paid" +"\n"+ //قسط پرداخت شده
                         "// 2* Pay Installments");// پرداخت
                 int input2 = scanner.nextInt();
                 if (input2 == 1){
-                    for (PayedInstallment payedInst : payedInstallmentService.findAllPayedInstallment(students)) {
-                        System.out.println("Installment on "+payedInst.getInstallmentDate()+" date for "+payedInst.getInstallmentAmount()+" amount on "+payedInst.getLocalDate()+" date");
+                    final List<PayedInstallment> allPayedInstallment = payedInstallmentService.findAllPayedInstallment(students);
+                    try {
+                        for (PayedInstallment payedInst : allPayedInstallment) {
+                            System.out.println("Installment on " + payedInst.getInstallmentDate() + " date for " + payedInst.getInstallmentAmount() + " amount on " + payedInst.getLocalDate() + " date");
+                        }
+                    } catch (NullPointerException e){
+                        System.out.println("!! EMPTY !!");
                     }
                     menu2run();
                 }
@@ -305,7 +321,9 @@ public class Main {
                     payedInstallment.setLoanType(lnt);
                     payedInstallment.setStudents(students);
                     payedInstallmentService.createInstallmentPayed(payedInstallment);
+                    installmentDate.remove(monthLoan-1);
                      System.out.println("Payment Done");
+
                 }
                 menu2run();
             case 3:
