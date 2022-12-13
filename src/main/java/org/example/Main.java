@@ -250,8 +250,36 @@ public class Main {
                 if (input2 == 1){
                     //todo
                 }
-                if (input2 == 2){
-//                    int installmentValue = ic.calculation();
+                if (input2 == 2) {
+                    System.out.println("Your Detail Loan : ");
+                    for (Installment allInst : installmentService.findAllInstallmentById(students)) {
+                        System.out.println("// " + allInst.getLoanType() + " : firstYear is : " + allInst.getFirstYear() + " Toman ," +
+                                "secondYear : " + allInst.getSecondYear() + " Toman ," +
+                                "thirdYear : " + allInst.getThirdYear() + " Toman ," +
+                                "fourthYear : " + allInst.getFourthYear() + " Toman ," +
+                                "fifthYear : " + allInst.getFifthYear() + " Toman ," + "\n");
+                    }
+                    System.out.println("Choose Loan : ");
+                    String loan =scanner.next();
+//                    LoanType lnt ;
+                    if (loan.equalsIgnoreCase("HOUSING")) lnt = LoanType.HOUSING;
+                    if (loan.equalsIgnoreCase("EDUCATION")) lnt = LoanType.EDUCATION;
+                    if (loan.equalsIgnoreCase("TUITION")) lnt = LoanType.TUITION;
+                    System.out.println("Choose Year Of would you pay :   (between 1 to 5");
+                    int yearLoan = scanner.nextInt();
+                    Installment inst = installmentService.findInstallment(students, lnt);
+                    if (yearLoan == 1) year = inst.getFirstYear();
+                    if (yearLoan == 2) year = inst.getSecondYear();
+                    if (yearLoan == 3) year = inst.getThirdYear();
+                    if (yearLoan == 4) year = inst.getFourthYear();
+                    if (yearLoan == 5) year = inst.getFifthYear();
+                    ic.installmentTimePay(inst.getDate(),year);
+
+                    System.out.println("Choose Month : ");
+                    int monthLoan = scanner.nextInt();
+                    System.out.println("-----------------"+"\n"+
+                            "Loan : "+lnt+" Year : "+yearLoan+" Month : "+monthLoan);
+
                 }
             case 3:
                 System.out.println("Your Loans is : ");
@@ -284,6 +312,9 @@ public class Main {
                 menu2run();
         }
     }
+
+    public static LoanType lnt ;
+    public static Long year ;
 
     private static String generatePassword(int length) {
         String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

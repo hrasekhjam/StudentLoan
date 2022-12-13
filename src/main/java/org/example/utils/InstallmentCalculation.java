@@ -1,5 +1,11 @@
 package org.example.utils;
 
+import org.example.entity.Students;
+import org.example.entity.enums.LoanType;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class InstallmentCalculation {
 
     public int calculation(String amount) {
@@ -15,5 +21,13 @@ public class InstallmentCalculation {
         double math4 = ((Math.pow(1.0033, 0)) - 1) / (0.0033 * (Math.pow(1.0033, 0)));
 
         return (int) (loanAmount / ((math1 + 1) * math2) + (math3 * math4));
+    }
+
+    public void installmentTimePay(LocalDate time,Long amount){
+        String times = time.format(DateTimeFormatter.ISO_DATE);
+        System.out.println(time);
+        for (int i = 1; i <= 12; i++) {
+            System.out.println(i+" --> "+time.plusMonths(i)+"     "+amount+" Toman");
+        }
     }
 }
